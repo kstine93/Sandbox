@@ -40,32 +40,22 @@ async def read_pending_requests():
     #TODO: Implement validation on returned data (make another pydantic class)
     return db.get_pending()
 
-# @app.route(requests_url + '/pending', methods=['GET'])
-# def read_pending_requests():
-#     return db.get_pending(), 200
+#--------------
+@app.post(requests_url + "/pending/{id}")
+def edit_pending_requests(id:int, body: EditPendingRequest):
 
-# #--------------
-# @app.route(requests_url + '/pending/<id>', methods=['POST'])
-# def edit_pending_requests(id):
+    #Filtering out default 'None' values
+    values = {key:val for key,val in body.dict().items() if val is not None}
+    if values:
+        #Updating Data
+        try:
+            db.edit_pending_by_id(id,**values)
+            return Response(f"Attributes changed for id {id}\n", 200)
+        except Exception as err:
+            return Response(str(err), 400)
 
-#     #If any data attached:
-#     if request.data:
-
-#         #Validating Payload
-#         try:
-#             data = EditPendingSchema(many=False).load(data=request.json)
-#         except ValidationError as err:
-#             return err.messages_dict, 400
-
-#         #Updating Data
-#         try:
-#             db.edit_pending_by_id(id,**request.json)
-#             return f"Attributes changed for id {id}\n", 200
-#         except Exception as err:
-#             return str(err), 400
-
-#     else:
-#         return "Error: No attributes provided in JSON request body\n", 400
+    else:
+        return Response("Error: No attributes provided in JSON request body\n", 422)
 
 # #--------------
 # #---FINISHED---

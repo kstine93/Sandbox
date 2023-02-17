@@ -135,7 +135,7 @@ def test_pendingRequests_approve_id(api_host: str, id: int = 1):
     return test_request(
         method="POST"
         ,url=f"{api_host}{baseUrl}/pending/{id}"
-        ,body={"rejected":"True"}
+        ,body={"rejected":True}
         ,headers=baseHeader
     )
 

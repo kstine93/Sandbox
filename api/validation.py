@@ -39,13 +39,13 @@ class NewRequestList(BaseModel):
 class EditPendingRequest(BaseModel):
     class Config:
         extra = Extra.forbid
-    request_cause: RequestCauses
-    rejected: bool
+    request_cause: RequestCauses = None
+    rejected: bool = None
 
 #----------------
 class GetFinishedByDate(BaseModel):
-    startDate: str
-    endDate: str
+    startDate: str = None
+    endDate: str = None
 
     @validator('startDate','endDate')
     def correct_time_format(cls,value):

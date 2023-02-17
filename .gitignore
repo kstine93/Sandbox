@@ -1,3 +1,7 @@
 /kubectl*
 /minikube-linux-amd64
 /test_db_setup/postgres-data
+/api/testing/__pycache__/*.pyc
+__pycache__
+/api/__pycache__
+/api/testing/__pycache__
