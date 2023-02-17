@@ -62,6 +62,7 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
 - [X] Define the endpoints needed and what data is required from client (use Swagger doc as planning area)
 - [X] Define payload data structure for all endpoints
 - [X] Implement in Flask
+- [ ] Migrate to FastAPI
 - [X] Test endpoints
 
 #### b. Class setup

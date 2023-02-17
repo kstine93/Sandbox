@@ -3,93 +3,102 @@
 
 from typing import Type
 
-from flask import Flask, render_template, request
+from fastapi import FastAPI, Response
+from pydantic import BaseModel
+#from flask import Flask, render_template, request
 
-from databaseConnection import DatabaseConnection
+#from databaseConnection import DatabaseConnection
 
 from marshmallow import ValidationError
-from validation import *
+#from validation import *
 
 #----------------
-db = DatabaseConnection()
+#db = DatabaseConnection()
 
 #----------------
-app = Flask(__name__)
+app = FastAPI()
 base_url = '/api/v1'
 requests_url = base_url + '/requests'
 
 #---------
 #---NEW---
 #---------
-@app.route(requests_url + '/new', methods=['POST'])
-def add_requests():
+class NewRequest(BaseModel):
+    email: str = "bad"
+    request_cause: str = "req"
 
-    #Validating Payload
-    try:
-        data = NewRequestSchema(many=True).load(data=request.json)
-    except ValidationError as err:
-        return err.messages_dict, 400
+class NewRequestList(BaseModel):
+    requests: list[NewRequest]
 
-    #Adding data to database
-    for item in data:
-        db.add_new_by_email(email=item['email'],cause=item['request_cause'])
+@app.post(requests_url + '/new')
+async def add_requests(body: NewRequestList):
+    return Response("New requests successfully added.\n",200)
+    # #Validating Payload
+    # try:
+    #     data = NewRequestSchema(many=True).load(data=request.json)
+    # except ValidationError as err:
+    #     return err.messages_dict, 400
 
-    return "New requests successfully added\n", 200
+    # #Adding data to database
+    # for item in data:
+    #     db.add_new_by_email(email=item['email'],cause=item['request_cause'])
 
-#-------------
-#---PENDING---
-#-------------
-@app.route(requests_url + '/pending', methods=['GET'])
-def read_pending_requests():
-    return db.get_pending(), 200
+    # return "New requests successfully added\n", 200
 
-#--------------
-@app.route(requests_url + '/pending/<id>', methods=['POST'])
-def edit_pending_requests(id):
+# #-------------
+# #---PENDING---
+# #-------------
+# @app.route(requests_url + '/pending', methods=['GET'])
+# def read_pending_requests():
+#     return db.get_pending(), 200
 
-    #If any data attached:
-    if request.data:
+# #--------------
+# @app.route(requests_url + '/pending/<id>', methods=['POST'])
+# def edit_pending_requests(id):
 
-        #Validating Payload
-        try:
-            data = EditPendingSchema(many=False).load(data=request.json)
-        except ValidationError as err:
-            return err.messages_dict, 400
+#     #If any data attached:
+#     if request.data:
 
-        #Updating Data
-        try:
-            db.edit_pending_by_id(id,**request.json)
-            return f"Attributes changed for id {id}\n", 200
-        except Exception as err:
-            return str(err), 400
+#         #Validating Payload
+#         try:
+#             data = EditPendingSchema(many=False).load(data=request.json)
+#         except ValidationError as err:
+#             return err.messages_dict, 400
 
-    else:
-        return "Error: No attributes provided in JSON request body\n", 400
+#         #Updating Data
+#         try:
+#             db.edit_pending_by_id(id,**request.json)
+#             return f"Attributes changed for id {id}\n", 200
+#         except Exception as err:
+#             return str(err), 400
 
-#--------------
-#---FINISHED---
-#--------------
-@app.route(requests_url + '/finished', methods=['POST'])
-def read_finished_requests():
+#     else:
+#         return "Error: No attributes provided in JSON request body\n", 400
 
-    #If any data attached:
-    if request.data:
+# #--------------
+# #---FINISHED---
+# #--------------
+# @app.route(requests_url + '/finished', methods=['POST'])
+# def read_finished_requests():
 
-        #Validating Payload
-        try:
-            data = GetFinishedByDate(many=False).load(data=request.json)
-        except ValidationError as err:
-            return err.messages_dict, 400
+#     #If any data attached:
+#     if request.data:
 
-        try:
-            return db.get_finished_by_date(data['startDate'],data['endDate']), 200
-        except Exception as err:
-            return str(err), 400
+#         #Validating Payload
+#         try:
+#             data = GetFinishedByDate(many=False).load(data=request.json)
+#         except ValidationError as err:
+#             return err.messages_dict, 400
 
-    else:
-        return db.get_finished(), 200
+#         try:
+#             return db.get_finished_by_date(data['startDate'],data['endDate']), 200
+#         except Exception as err:
+#             return str(err), 400
+
+#     else:
+#         return db.get_finished(), 200
 
 
-#------------------
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+# #------------------
+# if __name__ == "__main__":
+#     app.run(host="0.0.0.0", port=5000)

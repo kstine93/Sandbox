@@ -21,10 +21,10 @@ report_err()
 #--------------------
 
 echo "\n--- Starting Docker Container ---"
-sudo docker-compose -f testing/docker-compose.yaml up -d
+docker-compose -f test_db_setup/docker-compose.yaml up -d
 
 echo "\n--- Creating Database ---"
-sh testing/database-setup.sh || report_err "Database creation failed - ignore this error if database already exists"
+sh test_db_setup/database-setup.sh || report_err "Database creation failed - ignore this error if database already exists"
 
 #--------------------------
 #---Starting Application---
@@ -32,7 +32,7 @@ sh testing/database-setup.sh || report_err "Database creation failed - ignore th
 
 #Starting API
 echo "\n--- Starting API ---"
-python3 api-app/app.py || exit 1
+uvicorn api-app.app:app --reload || exit 1 || exit 1
 echo "\n--- Closing API ---"
 
 #------------------------
@@ -42,4 +42,4 @@ echo "\n--- Closing API ---"
 #NOTE: This command does not get executed since exiting from Flask forwarding used in app.py aborts this entire script.
 #Once this is in production mode, need to find better way to ensure this entire script gets executed. -Kevin, Feb. 4, 2023
 echo "\n--- Stopping Docker Container ---"
-#sudo docker-compose -f test_db_setup/docker-compose.yaml down
+docker-compose -f test_db_setup/docker-compose.yaml down
