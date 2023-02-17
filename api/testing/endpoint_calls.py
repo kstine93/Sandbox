@@ -55,7 +55,7 @@ def test_newRequest_normal(api_host: str):
     return test_request(
         method="POST"
         ,url=f"{api_host}{baseUrl}/new"
-        ,body=[{"email":"test@email.de","request_cause":"direct_request"}]
+        ,body={"requests":[{"email":"test@email.de","request_cause":"direct_request"}]}
         ,headers=baseHeader
     )
 
@@ -72,13 +72,13 @@ def test_newRequest_allCauses(api_host: str):
     return test_request(
         method="POST"
         ,url=f"{api_host}{baseUrl}/new"
-        ,body=[
+        ,body={"requests":[
             {"email":"test@email.de","request_cause":"direct_request"}
             ,{"email":"test2@email.de","request_cause":"account_deleted"}
             ,{"email":"test3@email.de","request_cause":"email_opt_out"}
             ,{"email":"test4@email.de","request_cause":"inactive"}
             ,{"email":"test5@email.de","request_cause":"other"}
-        ]
+        ]}
         ,headers=baseHeader
     )
 
@@ -86,7 +86,7 @@ def test_newRequest_blankEmail(api_host: str):
     return test_request(
         method="POST"
         ,url=f"{api_host}{baseUrl}/new"
-        ,body=[{"email":" ","request_cause":"direct_request"}]
+        ,body={"requests":[{"email":" ","request_cause":"direct_request"}]}
         ,headers=baseHeader
     )
 
@@ -94,7 +94,7 @@ def test_newRequest_blankCause(api_host: str):
     return test_request(
         method="POST"
         ,url=f"{api_host}{baseUrl}/new"
-        ,body=[{"email":" ","request_cause":" "}]
+        ,body={"requests":[{"email":" ","request_cause":" "}]}
         ,headers=baseHeader
     )
 
@@ -102,7 +102,15 @@ def test_newRequest_misnamedField(api_host: str):
     return test_request(
         method="POST"
         ,url=f"{api_host}{baseUrl}/new"
-        ,body=[{"email":"test@email.de","wrong_cause":"direct_request"}]
+        ,body={"requests":[{"email":"test@email.de","wrong_cause":"direct_request"}]}
+        ,headers=baseHeader
+    )
+
+def test_newRequest_extraField(api_host: str):
+    return test_request(
+        method="POST"
+        ,url=f"{api_host}{baseUrl}/new"
+        ,body={"requests":[{"email":"test@email.de","request_cause":"direct_request","injection":"BAD STUFF"}]}
         ,headers=baseHeader
     )
 
@@ -110,7 +118,7 @@ def test_newRequest_missingCause(api_host: str):
     return test_request(
         method="POST"
         ,url=f"{api_host}{baseUrl}/new"
-        ,body=[{"email":"test@email.de"}]
+        ,body={"requests":[{"email":"test@email.de"}]}
         ,headers=baseHeader
     )
 

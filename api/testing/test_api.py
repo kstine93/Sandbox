@@ -4,7 +4,7 @@ import json
 
 config = configparser.ConfigParser()
 config.read('../../deletion_app.cfg')
-port = '5000'
+port = '8000'
 api_host = config['API_SPECS']['api_host'] + f":{port}"
 
 #--------------------
@@ -13,8 +13,8 @@ api_host = config['API_SPECS']['api_host'] + f":{port}"
 
 #1. Normal requests:
 
-# assert test_newRequest_normal(api_host).status == 200
-# assert test_pendingRequests_get_normal(api_host).status == 200
+assert test_newRequest_normal(api_host).status == 200
+assert test_pendingRequests_get_normal(api_host).status == 200
 # assert test_pendingRequests_approve_id(api_host, id = 1).status == 200
 # assert test_pendingRequests_reject_id(api_host, id = 1).status == 200
 # assert test_pendingRequests_change_cause(api_host).status == 200
@@ -23,6 +23,8 @@ api_host = config['API_SPECS']['api_host'] + f":{port}"
 print("--Passed normal request tests--")
 
 #2. Bad requests:
+#assert test_newRequest_misnamedField(api_host). status == 422
+#assert test_newRequest_extraField(api_host).status == 422
 # assert test_pendingRequests_wrongId(api_host).data.decode('utf-8') == "No matching rows found - update aborted."
 # assert json.loads(test_pendingRequests_wrongDataFormat(api_host).data.decode('utf-8')) == {"rejected":["Not a valid string."]}
 # assert json.loads(test_pendingRequests_invalidCause(api_host).data.decode('utf-8')) == {"request_cause":["Must be one of: direct_request, account_deleted, email_opt_out, inactive, other."]}

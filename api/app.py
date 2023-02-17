@@ -4,16 +4,16 @@
 from typing import Type
 
 from fastapi import FastAPI, Response
-from pydantic import BaseModel
+from pydantic import BaseModel, Extra
 #from flask import Flask, render_template, request
 
-#from databaseConnection import DatabaseConnection
+from databaseConnection import DatabaseConnection
 
 from marshmallow import ValidationError
-#from validation import *
+from api.validation import *
 
 #----------------
-#db = DatabaseConnection()
+db = DatabaseConnection()
 
 #----------------
 app = FastAPI()
@@ -23,31 +23,23 @@ requests_url = base_url + '/requests'
 #---------
 #---NEW---
 #---------
-class NewRequest(BaseModel):
-    email: str = "bad"
-    request_cause: str = "req"
-
-class NewRequestList(BaseModel):
-    requests: list[NewRequest]
-
 @app.post(requests_url + '/new')
 async def add_requests(body: NewRequestList):
+
+    #Adding data to database
+    for item in body.requests:
+        db.add_new_by_email(email=item.email,cause=item.request_cause.value)
+
     return Response("New requests successfully added.\n",200)
-    # #Validating Payload
-    # try:
-    #     data = NewRequestSchema(many=True).load(data=request.json)
-    # except ValidationError as err:
-    #     return err.messages_dict, 400
 
-    # #Adding data to database
-    # for item in data:
-    #     db.add_new_by_email(email=item['email'],cause=item['request_cause'])
+#-------------
+#---PENDING---
+#-------------
+@app.get(requests_url + '/pending')
+async def read_pending_requests():
+    #TODO: Implement validation on returned data (make another pydantic class)
+    return db.get_pending()
 
-    # return "New requests successfully added\n", 200
-
-# #-------------
-# #---PENDING---
-# #-------------
 # @app.route(requests_url + '/pending', methods=['GET'])
 # def read_pending_requests():
 #     return db.get_pending(), 200
@@ -97,8 +89,3 @@ async def add_requests(body: NewRequestList):
 
 #     else:
 #         return db.get_finished(), 200
-
-
-# #------------------
-# if __name__ == "__main__":
-#     app.run(host="0.0.0.0", port=5000)
