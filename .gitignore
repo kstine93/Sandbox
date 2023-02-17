@@ -1,4 +1,3 @@
-/kubectl
-/kubectl.sha56
+/kubectl*
 /minikube-linux-amd64
 /testing/postgres-data
