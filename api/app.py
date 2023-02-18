@@ -76,15 +76,14 @@ async def read_pending_requests():
 
 #--------------
 @app.post(requests_url + "/pending/{id}")
-async def edit_pending_requests(id:int, body: EditPendingRequest):
+async def edit_pending_requests(id:int, body: EditPendingRequest | None = None):
 
+    if not body:
+        return Response("Warning: empty request body - please provide attributes to change.", 422)
+    
     #Filtering out default 'None' values
     values = filterNoneValsFromDict(body.dict())
-    # print(values)
-    #print(issubclass(values['request_cause'],enum.Enum))
-    # print(type(values['request_cause']))
-    # print(type(RequestCauses))
-    # print(isinstance(values['request_cause'],Enum))
+    #Converting Enums to strings:
     values = stringsFromEnumDict(values)
     if values:
         #Updating Data
@@ -95,23 +94,29 @@ async def edit_pending_requests(id:int, body: EditPendingRequest):
             return Response(str(err), 400)
 
     else:
-        return Response("Error: No attributes provided in JSON request body\n", 422)
+        return Response("Warning: No attributes provided in JSON request body. No changes made.\n", 422)
 
 #--------------
 #---FINISHED---
 #--------------
 
 @app.post(requests_url + '/finished')
-async def read_finished_requests(body: GetFinishedByDate):
-
+async def read_finished_requests(body: GetFinishedByDate | None = None):
+    print("test 1")
+    if not body:
+        return db.get_finished()
+    
     #Filtering out default 'None' values
     values = filterNoneValsFromDict(body.dict())
+    print("test 2")
     if values:
         #retrieving data based on date criteria
         try:
-            return Response(db.get_finished_by_date(**values.dict()), 200)
+            print('test 3')
+            return Response(db.get_finished_by_date(**values), 200)
         except Exception as err:
             return Response(str(err), 400)
 
     else:
+        print('test 4')
         return db.get_finished()

@@ -62,7 +62,7 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
 - [X] Define the endpoints needed and what data is required from client (use Swagger doc as planning area)
 - [X] Define payload data structure for all endpoints
 - [X] Implement in Flask
-- [ ] Migrate to FastAPI
+- [X] Migrate to FastAPI
 - [X] Test endpoints
 
 #### b. Class setup
@@ -72,11 +72,12 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
   - We could also implement an error class for better errors generally
 - [X] Implement class definition(s)
 - [X] Connect class(es) to API endpoints and to a **local database (JSON?) for testing**
-- [ ] Test endpoints
-  - [ ] Test malformed payloads
+- [X] Test endpoints
+  - [X] Test malformed payloads
 
 #### c. Deploy
 - [ ] Change credential storing to be more secure (i.e., not in config file)
+- [ ] Deploy API to Minikube and test
 - [ ] Deploy API to production environment
 - [ ] Re-test
 
@@ -120,20 +121,12 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
 - [ ] List out probable destinations
 - [ ] Decide how to separate rules from forwarding
 
-#### b. Class setup
-- [ ] Define overall class structure(s) for the API
-  - Basic could be a simple 'database_connection' class that connects to persistent database and has abstracted methods for retrieving data (could be simple generator function to iteratively - or asynchronously? - process requests)
-    - This class would also need to record confirmations of forwarding from all destinations and write these to database
-  - A good extension would be an error-handling class which has custom protocols for re-trying data deletion (as well as error reporting)
-- [ ] Implement class definition(s)
-  - Idea: Make new destinations as new methods in class? Or maybe a single method that calls a user-provided function name?
-
-#### c. Deploy
+#### b. Deploy
 - [ ] Deploy forwarding procedure to production environment
 - [ ] Set up connection to persistent database & test connection
   - Note: Can I re-use database-connection class from API?
 
-#### d. Test resilience
+#### c. Test resilience
 - [ ] Test what happens when a single destination fails
 - [ ] Test what happens when multiple - or all destinations fail
 - [ ] Test that confirmations of forwarding are recorded correctly to database

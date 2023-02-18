@@ -1,10 +1,9 @@
 from endpoint_calls import *
 import configparser
-import json
 
 config = configparser.ConfigParser()
 config.read('../../deletion_app.cfg')
-port = '8000'
+port = 8000
 api_host = config['API_SPECS']['api_host'] + f":{port}"
 
 #--------------------
@@ -14,21 +13,40 @@ api_host = config['API_SPECS']['api_host'] + f":{port}"
 #1. Normal requests:
 
 assert test_newRequest_normal(api_host).status == 200
-assert test_pendingRequests_get_normal(api_host).status == 200
-#assert test_pendingRequests_approve_id(api_host, id = 1).status == 200
-#assert test_pendingRequests_reject_id(api_host, id = 1).status == 200
-assert test_pendingRequests_change_cause(api_host, id = 1).status == 200
-#print(test_finishedRequests_noDates_normal(api_host))
-print(test_finishedRequests_withDates_normal(api_host))
+assert test_newRequest_allCauses(api_host).status == 200
+assert test_newRequest_bulk(api_host).status == 200
 
+assert test_pendingRequests_get_normal(api_host).status == 200
+assert test_pendingRequests_approve_id(api_host, id = 1).status == 200
+assert test_pendingRequests_reject_id(api_host, id = 1).status == 200
+assert test_pendingRequests_rejectedAsString(api_host, id = 1).status == 200
+assert test_pendingRequests_change_cause(api_host, id = 1).status == 200
+
+assert test_finishedRequests_noDates_normal(api_host).status == 200
+assert test_finishedRequests_withDates_normal(api_host).status == 200
+assert test_finishedRequests_emptyDates_normal(api_host).status == 200
+assert test_finishedRequests_withDates_onlyEndDate(api_host).status == 200
+assert test_finishedRequests_withDates_onlyStartDate(api_host).status == 200
+
+print("-------------------------------")
 print("--Passed normal request tests--")
+print("-------------------------------")
 
 #2. Bad requests:
-#assert test_newRequest_misnamedField(api_host). status == 422
-#assert test_newRequest_extraField(api_host).status == 422
-# assert test_pendingRequests_wrongId(api_host).data.decode('utf-8') == "No matching rows found - update aborted."
-# assert json.loads(test_pendingRequests_wrongDataFormat(api_host).data.decode('utf-8')) == {"rejected":["Not a valid string."]}
-# assert json.loads(test_pendingRequests_invalidCause(api_host).data.decode('utf-8')) == {"request_cause":["Must be one of: direct_request, account_deleted, email_opt_out, inactive, other."]}
-# assert json.loads(test_pendingRequests_misnamedField(api_host).data.decode('utf-8')) == {'mIsNaMeD_FiElD': ['Unknown field.']}
+assert test_newRequest_misnamedField(api_host).status == 422
+assert test_newRequest_extraField(api_host).status == 422
+assert test_newRequest_blankCause(api_host).status == 422
+assert test_newRequest_missingCause(api_host).status == 422
+assert test_newRequest_blankEmail(api_host).status == 422
+
+assert test_pendingRequests_wrongId(api_host).status == 400
+assert test_pendingRequests_invalidCause(api_host).status == 422
+assert test_pendingRequests_misnamedField(api_host).status == 422
 assert test_pendingRequests_emptyBody(api_host).status == 422
+
+assert test_finishedRequests_withDates_misnamedField(api_host).status == 422
+assert test_finishedRequests_withDates_reversedDateFormat(api_host).status == 422
+
+print("----------------------------")
 print("--Passed bad request tests--")
+print("----------------------------")

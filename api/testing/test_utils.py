@@ -13,11 +13,11 @@ import json
 #the message has changed (indicating that an update is needed, but that things
 # are still working o.k.)?
 
+#--------------------
 def print_test_output(func):
     #wrapper function to print some output for users during testing of requests:
     def wrapper(**kwargs):
         str_break = "---------------"
-        response_vars_to_print = ['status','data']
 
         print(str_break)
         print("----TESTING----")
@@ -32,7 +32,7 @@ def print_test_output(func):
         return response
     return wrapper
 
-
+#--------------------
 @print_test_output
 def test_request(method: str, url: str, **request_args):
 

@@ -44,6 +44,8 @@ class EditPendingRequest(BaseModel):
 
 #----------------
 class GetFinishedByDate(BaseModel):
+    class Config:
+        extra = Extra.forbid
     startDate: str = None
     endDate: str = None
 

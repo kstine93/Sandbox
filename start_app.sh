@@ -32,7 +32,7 @@ sh test_db_setup/database-setup.sh || report_err "Database creation failed - ign
 
 #Starting API
 echo "\n--- Starting API ---"
-uvicorn api.app:app --reload || exit 1 || exit 1
+uvicorn api.app:app --reload || exit 1
 echo "\n--- Closing API ---"
 
 #------------------------
