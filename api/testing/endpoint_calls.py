@@ -143,7 +143,7 @@ def test_pendingRequests_reject_id(api_host: str, id: int = 1):
     return test_request(
         method="POST"
         ,url=f"{api_host}{baseUrl}/pending/{id}"
-        ,body={"rejected":"False"}
+        ,body={"rejected":False}
         ,headers=baseHeader
     )
 

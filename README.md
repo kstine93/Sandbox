@@ -76,6 +76,7 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
   - [ ] Test malformed payloads
 
 #### c. Deploy
+- [ ] Change credential storing to be more secure (i.e., not in config file)
 - [ ] Deploy API to production environment
 - [ ] Re-test
 

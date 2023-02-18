@@ -1,7 +1,8 @@
 #Example Docker App using this resource:
 #https://docs.docker.com/language/python/build-images/
 
-from typing import Type
+import inspect
+import enum
 
 from fastapi import FastAPI, Response
 from pydantic import BaseModel, Extra
@@ -19,6 +20,39 @@ db = DatabaseConnection()
 app = FastAPI()
 base_url = '/api/v1'
 requests_url = base_url + '/requests'
+
+#----------------
+def filterNoneValsFromDict(obj: dict) -> dict:
+    '''Removes items from dict where value == None
+    
+    Parameter
+    ---------
+    obj: dict
+        dictionary in need of filtering.
+
+    Returns
+    -------
+    dict
+        dictionary after filtering.
+    '''
+    return {key:val for key,val in obj.items() if val is not None}
+
+#----------------
+def stringsFromEnumDict(obj: dict) -> dict:
+    '''If any values of given dict are instances of an Enum class
+    get just the value- not the entire class. Doesn't change other values.
+
+    Parameter
+    ---------
+    obj: dict
+        dictionary which might have classes as values
+
+    Returns
+    -------
+    dict
+        dictionary with only values - no classes.
+    '''
+    return {key:(val.value if isinstance(val,Enum) else val) for key,val in obj.items()}
 
 #---------
 #---NEW---
@@ -42,10 +76,16 @@ async def read_pending_requests():
 
 #--------------
 @app.post(requests_url + "/pending/{id}")
-def edit_pending_requests(id:int, body: EditPendingRequest):
+async def edit_pending_requests(id:int, body: EditPendingRequest):
 
     #Filtering out default 'None' values
-    values = {key:val for key,val in body.dict().items() if val is not None}
+    values = filterNoneValsFromDict(body.dict())
+    # print(values)
+    #print(issubclass(values['request_cause'],enum.Enum))
+    # print(type(values['request_cause']))
+    # print(type(RequestCauses))
+    # print(isinstance(values['request_cause'],Enum))
+    values = stringsFromEnumDict(values)
     if values:
         #Updating Data
         try:
@@ -57,25 +97,21 @@ def edit_pending_requests(id:int, body: EditPendingRequest):
     else:
         return Response("Error: No attributes provided in JSON request body\n", 422)
 
-# #--------------
-# #---FINISHED---
-# #--------------
-# @app.route(requests_url + '/finished', methods=['POST'])
-# def read_finished_requests():
+#--------------
+#---FINISHED---
+#--------------
 
-#     #If any data attached:
-#     if request.data:
+@app.post(requests_url + '/finished')
+async def read_finished_requests(body: GetFinishedByDate):
 
-#         #Validating Payload
-#         try:
-#             data = GetFinishedByDate(many=False).load(data=request.json)
-#         except ValidationError as err:
-#             return err.messages_dict, 400
+    #Filtering out default 'None' values
+    values = filterNoneValsFromDict(body.dict())
+    if values:
+        #retrieving data based on date criteria
+        try:
+            return Response(db.get_finished_by_date(**values.dict()), 200)
+        except Exception as err:
+            return Response(str(err), 400)
 
-#         try:
-#             return db.get_finished_by_date(data['startDate'],data['endDate']), 200
-#         except Exception as err:
-#             return str(err), 400
-
-#     else:
-#         return db.get_finished(), 200
+    else:
+        return db.get_finished()

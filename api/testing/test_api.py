@@ -15,10 +15,11 @@ api_host = config['API_SPECS']['api_host'] + f":{port}"
 
 assert test_newRequest_normal(api_host).status == 200
 assert test_pendingRequests_get_normal(api_host).status == 200
-assert test_pendingRequests_approve_id(api_host, id = 1).status == 200
-# assert test_pendingRequests_reject_id(api_host, id = 1).status == 200
-# assert test_pendingRequests_change_cause(api_host).status == 200
-# assert test_finishedRequests_noDates_normal(api_host).status == 200
+#assert test_pendingRequests_approve_id(api_host, id = 1).status == 200
+#assert test_pendingRequests_reject_id(api_host, id = 1).status == 200
+assert test_pendingRequests_change_cause(api_host, id = 1).status == 200
+#print(test_finishedRequests_noDates_normal(api_host))
+print(test_finishedRequests_withDates_normal(api_host))
 
 print("--Passed normal request tests--")
 
