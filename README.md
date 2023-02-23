@@ -76,8 +76,11 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
   - [X] Test malformed payloads
 
 #### c. Deploy
-- [ ] Change credential storing to be more secure (i.e., not in config file)
+- [X] Change credential storing to be more secure (i.e., not in standard config file)
 - [ ] Deploy API to Minikube and test
+  - [X] Make local image for Docker: https://www.stereolabs.com/docs/docker/creating-your-image/
+  - [X] Test on Docker
+  - [ ] Make K8s deployment with postgres + api services
 - [ ] Deploy API to production environment
 - [ ] Re-test
 
@@ -134,6 +137,9 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
 
 ---
 
+### 4. Setup Production environment
+- [ ] Provision Kubernetes (install on an EC-2 cluster?)
+
 ## Dev Notes:
 
 > Feb. 5, 2023:
@@ -151,3 +157,44 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
 > 2. Get postgres working on K8s
 > 3. Deploy api to K8s
 > 4. Integrate api on k8s with database on k8s
+
+---
+
+> Feb. 18, 2023:
+> Finished migration to FastAPI and all API unit tests.
+> ready to deploy to Minikube, and then move on to a K8s instance
+
+---
+
+> Feb. 21, 2023:
+> Trying to convert my code into a container-ready format and get it to run on Docker.
+> My postgres DB was already running on Docker, and I think I got my api to connect o.k. (at least did not get
+> any errors when container booted up).
+> However, I'm having a hard time connecting to the API - I keep getting a 'connection reset' error.
+> I did make a test API in trainings/docker-example - and it worked like a charm with this setup:
+> ```
+> docker build -t test_fastapi:v1 .
+> docker run -d -p 8080:8080 test_fastapi:v1
+> curl localhost:8080
+> ```
+> I need to see what might be happening here and why I can't get my bigger version to work...
+> Next to-dos:
+> - Once it runs on Docker, tweak dockerfile - can I get rid of copy commands?
+> - create minikube deployment
+> - Once it runs on minikube, configure so that secrets work correctly.
+>
+> **SOLUTION:**
+> There were 2 issues with my initial build:
+> - 'pydantic' had a dependency 'email-validator' - which was not installed for some reason. Adding this to the requirements to install fixed this
+> - My docker containers were not on the same network, so my initialization of my databaseConnection class ended up trying to connect to the database container and getting no response. This was solved by making sure the containers were on the same network"
+> `docker run --network test_db_setup_default -d -p 8080:8080 requestprocessor_api:v1`
+
+---
+
+> Feb. 23, 2023
+> I've now gotten my api + database working on 2 networked docker containers.
+> My next step is to convert this into a Kubernetes deployment and set it up on Minikube:
+> 1. Make deployment file with postgres + api images
+> 2. Network my kubernetes instance on Minikube to API
+> 3. Test
+> 4. (stretch) set up better secrets management using K8s secrets.

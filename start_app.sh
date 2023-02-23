@@ -21,10 +21,10 @@ report_err()
 #--------------------
 
 echo "\n--- Starting Docker Container ---"
-docker-compose -f test_db_setup/docker-compose.yaml up -d
+docker-compose -f postgres/test_db_setup/docker-compose.yaml up -d
 
 echo "\n--- Creating Database ---"
-sh test_db_setup/database-setup.sh || report_err "Database creation failed - ignore this error if database already exists"
+sh postgres/test_db_setup/database-setup.sh || report_err "Database creation failed - ignore this error if database already exists"
 
 #--------------------------
 #---Starting Application---

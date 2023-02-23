@@ -18,7 +18,10 @@ class DatabaseConnection:
         self.connect_to_db()
         self.set_data_specs()
         # self.drop_tables()### ONLY FOR TESTING
-        # self.create_tables()### ONLY FOR TESTING - I would prefer to keep all table setup in another structure.
+        #Note: The other option to create these tables is to do it within the container startup.
+        #The default postgres image does offer some functionality for this, but I think it's still better to do it here
+        #(more flexible if it fails)
+        self.create_tables()### ONLY FOR TESTING - I would prefer to keep all table setup in another structure.
         # self.add_new_by_email('test','test2')
         # self.test_select()
 
@@ -61,11 +64,8 @@ class DatabaseConnection:
 
     #----------------
     def create_tables(self):
-        #Note: I'm purposefully not adding 'IF NOT EXISTS' to these table creation commands
-        #I find that if the tables need to be re-created, 'IF NOT EXISTS' can prove to be a bug.
-        #I should instead find another way to check if the tables exist as a method of this class.
         self.db_cur.execute(f'''
-            CREATE TABLE {self.pending_table_name} (
+            CREATE TABLE IF NOT EXISTS {self.pending_table_name} (
                 id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY
                 ,dt_requested TIMESTAMP DEFAULT NOW()
                 ,email_address VARCHAR
@@ -75,7 +75,7 @@ class DatabaseConnection:
         ''')
 
         self.db_cur.execute(f'''
-            CREATE TABLE {self.finished_table_name} (
+            CREATE TABLE IF NOT EXISTS {self.finished_table_name} (
                 id bigint PRIMARY KEY
                 ,dt_requested TIMESTAMP
                 ,email_address VARCHAR
