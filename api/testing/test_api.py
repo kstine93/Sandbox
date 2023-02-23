@@ -2,9 +2,8 @@ from endpoint_calls import *
 import configparser
 
 config = configparser.ConfigParser()
-config.read('../../deletion_app.cfg')
-port = 8000
-api_host = config['API_SPECS']['api_host'] + f":{port}"
+config.read('../deletion_app.cfg')
+api_host = config['API_SPECS']['api_host'] + ":" + config['API_SPECS']['api_port']
 
 #--------------------
 #---Test Scenarios---
@@ -50,3 +49,7 @@ assert test_finishedRequests_withDates_reversedDateFormat(api_host).status == 42
 print("----------------------------")
 print("--Passed bad request tests--")
 print("----------------------------")
+
+print("======================")
+print("== ALL TESTS PASSED ==")
+print("======================")

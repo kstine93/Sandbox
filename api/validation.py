@@ -1,6 +1,6 @@
 #Code to validate data flowing through the API
 
-from pydantic import BaseModel,validator, EmailStr, Field, Extra
+from pydantic import BaseModel,validator, EmailStr, Extra
 from datetime import date
 from enum import Enum
 # from marshmallow import Schema, fields, validate, ValidationError

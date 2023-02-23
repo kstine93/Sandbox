@@ -1,20 +1,15 @@
 #Example Docker App using this resource:
 #https://docs.docker.com/language/python/build-images/
 
-import inspect
-import enum
-
 from fastapi import FastAPI, Response
-from pydantic import BaseModel, Extra
 #from flask import Flask, render_template, request
 
 from databaseConnection import DatabaseConnection
 
-from marshmallow import ValidationError
-from api.validation import *
-
 #----------------
 db = DatabaseConnection()
+
+from validation import *
 
 #----------------
 app = FastAPI()
@@ -102,21 +97,18 @@ async def edit_pending_requests(id:int, body: EditPendingRequest | None = None):
 
 @app.post(requests_url + '/finished')
 async def read_finished_requests(body: GetFinishedByDate | None = None):
-    print("test 1")
+    
     if not body:
         return db.get_finished()
     
     #Filtering out default 'None' values
     values = filterNoneValsFromDict(body.dict())
-    print("test 2")
     if values:
         #retrieving data based on date criteria
         try:
-            print('test 3')
             return Response(db.get_finished_by_date(**values), 200)
         except Exception as err:
             return Response(str(err), 400)
 
     else:
-        print('test 4')
         return db.get_finished()
