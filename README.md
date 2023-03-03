@@ -198,3 +198,8 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
 > 2. Network my kubernetes instance on Minikube to API
 > 3. Test
 > 4. (stretch) set up better secrets management using K8s secrets.
+
+---
+
+> Mar 3, 2023
+> I've gotten a postgres instance up-and-running. Need to now deploy my API and see if it can connect (try to use basic version first?)

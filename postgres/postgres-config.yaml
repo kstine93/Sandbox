@@ -1,0 +1,11 @@
+#Note: Developed with the aid of: https://www.containiq.com/post/deploy-postgres-on-kubernetes
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    app: requestProcessor
+data:
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DB: practice_db
