@@ -3,7 +3,7 @@ apiVersion: v1
 metadata:
   name: postgres-pv-volume
   labels:
-    app: requestProcessor
+    app: requestProcessor_db
     type: local
 spec:
   storageClassName: "test"
@@ -21,7 +21,7 @@ apiVersion: v1
 metadata:
   name: postgres-pv-claim
   labels:
-    app: requestProcessor
+    app: requestProcessor_db
 spec:
   storageClassName: "test"
   accessModes:

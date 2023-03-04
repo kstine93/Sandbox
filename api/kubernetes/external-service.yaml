@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: requestprocessor-api-external-service
+spec:
+  selector:
+    app: requestProcessor
+  #specifying 'loadBalancer' makes this into an external service (somehow). Assigns an external IP address.
+  #This is one way to make your application accessible externally, but to make a DNS name + support httpS - then you need an ingress.
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      #Port for the browser - has a range between 30000 and 32767
+      nodePort: 30004

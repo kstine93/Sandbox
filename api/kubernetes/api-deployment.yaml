@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: requestprocessor-api
+  labels:
+    app: requestProcessor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: requestProcessor
+  template:
+    metadata:
+      labels:
+        app: requestProcessor
+    spec:
+      containers:
+      #Only specifying one container
+      - name: requestprocessor-api
+        image: requestprocessor_api:v1
+        #This forces Minikube to ignore remote docker image repos
+        #Then, we need to configure minikube so it can see local images:
+        #1. Point shell to minikube's docker-daemon: `eval $(minikube -p minikube docker-env)`
+        #2. Re-build docker image `docker build ./path/here -t image_name:version
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080

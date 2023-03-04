@@ -203,3 +203,34 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
 
 > Mar 3, 2023
 > I've gotten a postgres instance up-and-running. Need to now deploy my API and see if it can connect (try to use basic version first?)
+> I've also gotten a basic version of the API running on another container - but I haven't activated the database connection yet.
+> Next, I need to set up an internal service on K8s so that my API can feasibly connect to postgres - and then I can try activating the database class and seeing if it works o.k.
+> ---
+> Steps for deploying to minikube:
+> 1. boot up minikube
+> 2. (re)start postgres deployment
+> 3. tell minikube to look elsewhere for its images: `eval $(minikube -p minikube docker-env)`
+> 4. Navigate to API folder and rebuild docker image for API: `docker build -t requestprocessor_api:v1 .`
+> 5. (re)start API deployment
+> 6. (re)start external service
+> 7. Tell minikube to give me a URL for external service! `minikube service requestprocessor-api-external-service --url`
+> 8. Use external service URL to test application
+
+
+---
+---
+### Project Learnings:
+
+##### Set up your production environment - and test in it - ASAP
+I started developing this app completely locally - I set up some nice scripts to connect my API (run from CLI) to postgres (on Docker) and I then used a 2nd terminal to do testing. Very nice! BUT: when it came to move this to Kubernetes, it was a pain in the butt.
+I first opted to move it to my local Docker instance to make sure I could build the API image without having to deal with services and deployments. This worked, but then I had to migrate twice - from local to Docker, and then from Docker to K8s (this 2nd one wasn't a big deal, but still).
+I think I would have been much better served by doing this:
+1. Set up *absolute basic version of my app* - and deploy it to the production environment. Then, I have all of my infrastructure there and I can choose where to develop.
+2. Develop locally for convenience, but after getting something working, immediately deploy it to the production environment and test again
+
+---
+
+##### Continuously record the CLI commands I'm using
+Everything from building docker images to deploying on Kubernetes - there are a lot of commands I'm running from the command line when setting up my app. And I keep forgetting which ones I used! I'm continuously scrolling through the command history to find them again, which is not great.
+What I should instead do is this: once I set up my production environment with my first version of my app, I need to record all steps to set up the app in that environment. And if I add new features (e.g., I require a new internal K8s service), then I simply add those to the running list.
+One issue that I'm running into this time is that I have such a complex testing system (e.g., build docker container, make available to minikube, etc.) that I don't bother to record all of the steps.

@@ -139,7 +139,7 @@ class DatabaseConnection:
             self.db_conn.commit()
         else:
             self.db_conn.rollback()
-            raise ValueError("No matching rows found - update aborted.")
+            raise ValueError("No matching records found - update aborted.")
 
     #----------------
     def get_pending(self):

@@ -3,8 +3,8 @@ import configparser
 
 config = configparser.ConfigParser()
 config.read('../deletion_app.cfg')
-api_host = config['API_SPECS']['api_host'] + ":" + config['API_SPECS']['api_port']
-
+#api_host = config['API_SPECS']['api_host'] + ":" + config['API_SPECS']['api_port']
+api_host = "192.168.49.2:30004"
 #--------------------
 #---Test Scenarios---
 #--------------------

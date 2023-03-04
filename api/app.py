@@ -49,6 +49,22 @@ def stringsFromEnumDict(obj: dict) -> dict:
     '''
     return {key:(val.value if isinstance(val,Enum) else val) for key,val in obj.items()}
 
+
+#TEST:
+@app.get(requests_url + '/test')
+async def test():
+    return Response("Looks good\n", 200)
+
+@app.get(requests_url + '/testdb')
+async def test():
+    try:
+        db = DatabaseConnection()
+        return Response("YOU'VE DONE IT!\n",200)
+    except Exception as e:
+        print(e)
+        return Response("Database setup failed :/\n", 401)
+
+
 #---------
 #---NEW---
 #---------

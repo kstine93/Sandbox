@@ -4,18 +4,18 @@ metadata:
   name: postgres-deployment
   #Specifying a label here allows OTHER resources to find and use this deployment (e.g., a service, ingress, or pod)
   labels:
-    app: requestProcessor
+    app: requestProcessor_db
 spec:
   #how many node replicas we want:
   replicas: 1
   selector:
     matchLabels:
-      app: requestProcessor
+      app: requestProcessor_db
   #template is the blueprint for the POD
   template:
     metadata:
       labels:
-        app: requestProcessor
+        app: requestProcessor_db
     spec:
       containers:
       #Only specifying one container

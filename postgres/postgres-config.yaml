@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: postgres-config
   labels:
-    app: requestProcessor
+    app: requestProcessor_db
 data:
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
