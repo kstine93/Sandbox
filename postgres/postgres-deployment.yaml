@@ -26,6 +26,23 @@ spec:
         envFrom:
         - configMapRef:
             name: postgres-config
+        # env:
+        # - name: POSTGRES_DB
+        #   value: "practice_db"
+        # - name: POSTGRES_USER
+        #   value: "postgres"
+        # - name: POSTGRES_PASSWORD
+        #   value: "postgres"
+        # - name: POSTGRES_USER
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: postgres-secret
+        #       key: postgres-username
+        # - name: POSTGRES_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: postgres-secret
+        #       key: postgres-password
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: postgresdb

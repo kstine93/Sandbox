@@ -77,20 +77,20 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
 
 #### c. Deploy
 - [X] Change credential storing to be more secure (i.e., not in standard config file)
-- [ ] Deploy API to Minikube and test
+- [X] Deploy API to Minikube and test
   - [X] Make local image for Docker: https://www.stereolabs.com/docs/docker/creating-your-image/
   - [X] Test on Docker
-  - [ ] Make K8s deployment with postgres + api services
-- [ ] Deploy API to production environment
-- [ ] Re-test
+  - [X] Make K8s deployment with postgres + api services
+- [X] Deploy API to production environment
+- [X] Re-test
 
 ---
 
 ### 2. Build persistent database
 
 #### a. Database setup
-- [ ] Create database in production environment
-  - [ ] Decide whether to use Postgres as persistent K8s volume or an external database
+- [X] Create database in production environment
+  - [X] Decide whether to use Postgres as persistent K8s volume or an external database
     - Notes: It might be more nicely self-contained if I just used a persistent volume in K8s - an external database would require additional setup and wouldn't be as 'clean'. I also don't have experience with setting up persistent k8s volumes, so that would be nice practice.
 - [X] Define database schema:
   - I think we only need 2 tables: [pending requests] and [finished requests].
@@ -104,12 +104,12 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
     - finished requests:
       - < Same as pending >
       - Date processed (date)
-- [ ] Test connections to database 
+- [X] Test connections to database 
 
 #### b. Connect API to database
-- [ ] Edit API to use production database
-- [ ] Test API
-  - [ ] Test adding, modifying, and removing from database
+- [X] Edit API to use production database
+- [X] Test API
+  - [X] Test adding, modifying, and removing from database
 
 #### c. Test persistence
 - [ ] Restart API runtime - ensure data is still persisted
@@ -216,6 +216,32 @@ Requests will be stored in a neighboring Kafka instance within the same Kubernet
 > 7. Tell minikube to give me a URL for external service! `minikube service requestprocessor-api-external-service --url`
 > 8. Use external service URL to test application
 
+---
+
+> Mar 4, 2023
+> I've gotten the application working on Kubernetes! **AND ALL OF MY TESTS PASSED!!**
+> Today is a glorious day.
+> Now that I've basically gotten my app working, I need to do some cleanup before I move on to building the 3rd part of the app,
+> which will process the requests periodically (this is basically a skeleton structure anyway)
+
+**Clean up:**
+1. Rewrite my code into a format that is Kubernetes-friendly, but also allows local testing (no need to support Docker testing) - this is going to take some planning and should include:
+   1. Appropriate protection of credentials in secrets file
+      1. I'm working on this now. I ran into an issue with re-starting the postgres instance - something about the persistent volume wasn't working so I deleted the volume and it needs to be re-initialized. Once that's done, edit the commented-out sections of the deployment file to figure out how to use secret values as environment variables.
+   2. Credentials should not be part of GH upload (although since this is testing, maybe just note in the file that credentials would be normally excluded)
+   3. Remove (or archive) unnecessary Docker files (e.g., for building postgres setup for local Docker)
+   4. Clean up "DatabaseConnection.py"
+   5. ~~**Remove Kafka folder** - a RDBMS is the best choice for this kind of low-volume, simple application. Plan to play with Kafka next time.~~
+   6. Changing 'config' file: for Kubernetes we need a K8s config file, for local testing, we can keep the local version?
+      1. Will testing be affected if we use localhost for local testing vs. K8s URL?
+
+**Optimize:**
+1. Completely wipe and re-create postgres and api deployments (images removed from docker, delete minikube deployments)
+2. Restart applications in clean environment and *TEST that they still work*
+3. Try to break postgres instance - kill the pod and see if data is lost
+   1. If data IS lost, figure out how to make pod resistant to data loss (replicas?)
+4. **IMPLEMENT AUTHENTICATION SYSTEM**
+   1. I'm not sure the best way - let's try to start with 
 
 ---
 ---
